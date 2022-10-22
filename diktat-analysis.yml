@@ -1,0 +1,2 @@
+- name: HEADER_MISSING_OR_WRONG_COPYRIGHT
+  enabled: false
