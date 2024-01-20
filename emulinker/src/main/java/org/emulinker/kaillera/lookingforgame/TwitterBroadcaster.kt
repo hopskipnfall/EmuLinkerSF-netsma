@@ -64,21 +64,19 @@ internal constructor(
         val message =
           "User: ${user.name}\nGame: ${lookingForGameEvent.gameTitle}\nServer: ${flags.serverName} (${flags.serverAddress})"
         val tweet = twitter.postTweet(message)
-        user.game!!.announce(getUrl(tweet, twitter.userIdFromAccessToken), user)
-        logger.atFine().log("Posted tweet: %s", getUrl(tweet, twitter.userIdFromAccessToken))
-        postedTweets[lookingForGameEvent] = tweet.id
+        if (tweet != null && tweet.id != null) {
+          user.game!!.announce(getUrl(tweet, twitter.userIdFromAccessToken), user)
+          logger.atFine().log("Posted tweet: %s", getUrl(tweet, twitter.userIdFromAccessToken))
+          postedTweets[lookingForGameEvent] = tweet.id
+        }
       }
     pendingReports[lookingForGameEvent] = timerTask
     return true
   }
 
-  fun cancelActionsForUser(userId: Int): Boolean {
-    return cancelMatchingEvents { event: LookingForGameEvent -> event.user.id == userId }
-  }
+  fun cancelActionsForUser(userId: Int): Boolean = cancelMatchingEvents { it.user.id == userId }
 
-  fun cancelActionsForGame(gameId: Int): Boolean {
-    return cancelMatchingEvents { event: LookingForGameEvent -> event.gameId == gameId }
-  }
+  fun cancelActionsForGame(gameId: Int): Boolean = cancelMatchingEvents { it.gameId == gameId }
 
   private fun cancelMatchingEvents(predicate: (LookingForGameEvent) -> Boolean): Boolean {
     if (twitter == null) {
