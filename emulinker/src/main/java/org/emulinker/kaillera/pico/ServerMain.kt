@@ -5,6 +5,7 @@ import com.codahale.metrics.CsvReporter
 import com.codahale.metrics.MetricFilter
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet
 import com.google.common.flogger.FluentLogger
+import io.netty.util.ResourceLeakDetector
 import java.io.File
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
@@ -24,6 +25,11 @@ fun main() {
     "flogger.backend_factory",
     "com.google.common.flogger.backend.log4j2.Log4j2BackendFactory#getInstance",
   )
+
+//  ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED)
+//  stripFromProdBinary {
+    ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID)
+//  }
 
   val javaVersion: Double? = System.getProperty("java.specification.version").toDoubleOrNull()
   when {
